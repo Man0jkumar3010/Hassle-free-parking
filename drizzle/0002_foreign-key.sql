@@ -1,0 +1,1 @@
+ALTER TABLE "slot-booking" ADD CONSTRAINT "slot-booking_slot_id_slot_id_fk" FOREIGN KEY ("slot_id") REFERENCES "public"."slot"("id") ON DELETE no action ON UPDATE no action;

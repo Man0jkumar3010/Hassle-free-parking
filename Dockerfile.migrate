@@ -1,0 +1,15 @@
+# Use a Node.js image
+FROM node:18
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY package.json package-lock.json ./
+RUN npm install --legacy-peer-deps
+
+# Copy the full application (or at least the migrations folder)
+COPY . .
+
+# Run Drizzle migration on startup
+CMD ["npx", "drizzle-kit", "migrate"]

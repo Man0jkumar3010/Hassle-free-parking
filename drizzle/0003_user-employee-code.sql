@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "employee_code" varchar(32) DEFAULT NULL;

@@ -1,0 +1,61 @@
+version: "3"
+
+services:
+  postgres:
+    container_name: postgres-db
+    image: postgres:latest
+    env_file:
+      - .env.local
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DATABASE}
+    ports:
+      - 5433:5432
+    volumes:
+      - /mnt/postgres_data:/var/lib/postgresql/data
+    restart: always
+    # networks:
+    #   - my_network
+
+  drizzle-migrate:
+    container_name: drizzle-migrate
+    build:
+      context: ./
+      dockerfile: Dockerfile.migrate  # A separate Dockerfile for migration
+    env_file:
+      - .env.local
+    depends_on:
+      - postgres
+    restart: "no"  # Run once and exit
+
+  next-app:
+    container_name: next-app
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    env_file:
+      - .env.local
+    restart: always
+    ports:
+      - 3000:3000
+    # networks:
+    #   - my_network
+
+  nginx:
+      container_name: nginx-proxy
+      image: nginx:latest
+      ports:
+        - "8080:80"   # HTTP port
+        - "443:443" # Uncomment for HTTPS later
+      volumes:
+        - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      depends_on:
+        - next-app
+      # networks:  # Add to the same network
+      #   - my_network
+
+
+volumes:
+  postgres_data:
+    driver: local
