@@ -9,7 +9,10 @@ const pool = new Pool({
   password: process.env.POSTGRES_PASSWORD!,
   user: process.env.POSTGRES_USER!,
   database: process.env.POSTGRES_DATABASE!,
-  ssl: process.env.POSTGRES_SSL_ENABLED! === 'true',
+  ssl:
+    process.env.POSTGRES_SSL_ENABLED === "true"
+      ? { rejectUnauthorized: false }
+      : false,
 });
 const db = drizzle({ client: pool, schema, logger: true });
 
