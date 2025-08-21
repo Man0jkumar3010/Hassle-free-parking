@@ -3,14 +3,13 @@ import {  users } from "@/db/schemas";
 import {  company } from "@/db/schemas";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
-import AWS from "aws-sdk";
 import { OTP_CONSTANT, OTP_LIMIT_EXPIRY_TIME } from "../../../../constant";
 
-const sns = new AWS.SNS({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION,
-});
+// const sns = new AWS.SNS({
+//   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+//   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+//   region: process.env.AWS_REGION,
+// });
 
 export async function POST(request: Request) {
   try {
