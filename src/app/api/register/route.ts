@@ -2,14 +2,13 @@ import db from "@/db/index";
 import { company, users } from "@/db/schemas";
 import { eq, or } from "drizzle-orm";
 import { NextResponse } from "next/server";
-import AWS from "aws-sdk";
 import { CustomHTTPError } from "@/utils/server/lib";
 
-const sns = new AWS.SNS({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION,
-});
+// const sns = new AWS.SNS({
+//   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+//   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+//   region: process.env.AWS_REGION,
+// });
 
 export async function POST(request: Request) {
   try {
@@ -63,7 +62,7 @@ export async function POST(request: Request) {
           id: users.id,
           mobileNumber: users.mobileNumber,
           companyId: users.companyId,
-          otp:users.otp
+          otp: users.otp,
         })
         .from(users)
         .where(eq(users.mobileNumber, mobileNumber))
@@ -98,10 +97,7 @@ export async function POST(request: Request) {
       }
 
       if (existingUserData[0]?.employeeCode === employeeCode) {
-        throw new CustomHTTPError(
-          "Employee code should be unique",
-          409
-        );
+        throw new CustomHTTPError("Employee code should be unique", 409);
       }
 
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -126,16 +122,16 @@ export async function POST(request: Request) {
 
       newUser = newUserRow;
       // Send OTP Notification
-      const params = {
-        PhoneNumber: `+91${newUser.mobileNumber}`,
-        Message: `Easy Parking Verification Code ${otp}. Please enter this OTP to complete your registration. This code is valid for 10 minutes. Do not share it with anyone.`,
-        MessageAttributes: {
-          "AWS.SNS.SMS.SMSType": {
-            DataType: "String",
-            StringValue: "Transactional",
-          },
-        },
-      };
+      // const params = {
+      //   PhoneNumber: `+91${newUser.mobileNumber}`,
+      //   Message: `Easy Parking Verification Code ${otp}. Please enter this OTP to complete your registration. This code is valid for 10 minutes. Do not share it with anyone.`,
+      //   MessageAttributes: {
+      //     "AWS.SNS.SMS.SMSType": {
+      //       DataType: "String",
+      //       StringValue: "Transactional",
+      //     },
+      //   },
+      // };
 
       // await sns.publish(params).promise();
     });
@@ -147,8 +143,7 @@ export async function POST(request: Request) {
         userId: (newUser as any).id,
         mobileNumber: (newUser as any).mobileNumber,
         companyId: (newUser as any).companyId,
-        otp:(newUser as any ).otp 
-        
+        otp: (newUser as any).otp,
       });
     } else {
       return NextResponse.json(

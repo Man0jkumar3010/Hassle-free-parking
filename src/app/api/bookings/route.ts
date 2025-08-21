@@ -4,19 +4,13 @@ import db from "@/db";
 import { slotBooking, slot, users } from "@/db/schemas";
 import { eq, and, lte, gte, sql } from "drizzle-orm";
 import { DecodedToken } from "../users/route";
-import {
-  CustomHTTPError,
-  getISTDate,
-  isIsoDate,
-  verifyToken,
-} from "@/utils/server/lib";
-import AWS from "aws-sdk";
+import { CustomHTTPError, isIsoDate, verifyToken } from "@/utils/server/lib";
 
-const sns = new AWS.SNS({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION,
-});
+// const sns = new AWS.SNS({
+//   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+//   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+//   region: process.env.AWS_REGION,
+// });
 
 export async function GET(req: NextRequest) {
   try {
@@ -224,9 +218,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let getSlotName;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let userMobileNumber;
-    const bookingDate = getISTDate(String(parsedStartTime));
 
     await db.transaction(async (tx) => {
       const [slotDetails] = await tx
@@ -291,16 +286,16 @@ export async function POST(req: NextRequest) {
       }
     });
 
-    const params = {
-      PhoneNumber: `+91${userMobileNumber}`,
-      Message: `Your slot booking for "${getSlotName}" on ${bookingDate} has been successfully booked.`,
-      MessageAttributes: {
-        "AWS.SNS.SMS.SMSType": {
-          DataType: "String",
-          StringValue: "Transactional",
-        },
-      },
-    };
+    // const params = {
+    //   PhoneNumber: `+91${userMobileNumber}`,
+    //   Message: `Your slot booking for "${getSlotName}" on ${bookingDate} has been successfully booked.`,
+    //   MessageAttributes: {
+    //     "AWS.SNS.SMS.SMSType": {
+    //       DataType: "String",
+    //       StringValue: "Transactional",
+    //     },
+    //   },
+    // };
 
     // await sns.publish(params).promise();
 
